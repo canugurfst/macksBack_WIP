@@ -1,0 +1,182 @@
+[gd_scene load_steps=25 format=2]
+
+[ext_resource path="res://art/smallestMack 32x32.png" type="Texture" id=1]
+[ext_resource path="res://characters/player.gd" type="Script" id=2]
+[ext_resource path="res://characters/label.gd" type="Script" id=3]
+
+[sub_resource type="AtlasTexture" id=1]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=2]
+atlas = ExtResource( 1 )
+region = Rect2( 32, 0, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=3]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 224, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=4]
+atlas = ExtResource( 1 )
+region = Rect2( 32, 224, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=5]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 32, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=6]
+atlas = ExtResource( 1 )
+region = Rect2( 32, 32, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=7]
+atlas = ExtResource( 1 )
+region = Rect2( 0, 64, 32, 32 )
+
+[sub_resource type="AtlasTexture" id=8]
+atlas = ExtResource( 1 )
+region = Rect2( 32, 64, 32, 32 )
+
+[sub_resource type="SpriteFrames" id=9]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ) ],
+"loop": true,
+"name": "idle",
+"speed": 10.0
+}, {
+"frames": [ SubResource( 3 ), SubResource( 4 ) ],
+"loop": true,
+"name": "jump",
+"speed": 10.0
+}, {
+"frames": [ SubResource( 5 ), SubResource( 6 ), SubResource( 7 ), SubResource( 8 ) ],
+"loop": true,
+"name": "walk",
+"speed": 10.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=10]
+extents = Vector2( 6, 15 )
+
+[sub_resource type="Animation" id=11]
+resource_name = "idle"
+length = 0.05
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "idle" ]
+}
+
+[sub_resource type="Animation" id=12]
+resource_name = "jump"
+length = 0.05
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "jump" ]
+}
+
+[sub_resource type="Animation" id=13]
+resource_name = "walk"
+length = 0.05
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:animation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ "walk" ]
+}
+
+[sub_resource type="AnimationNodeAnimation" id=23]
+animation = "jump"
+
+[sub_resource type="AnimationNodeAnimation" id=24]
+animation = "jump"
+
+[sub_resource type="AnimationNodeAnimation" id=20]
+animation = "idle"
+
+[sub_resource type="AnimationNodeAnimation" id=21]
+animation = "walk"
+
+[sub_resource type="AnimationNodeAnimation" id=22]
+animation = "walk"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id=17]
+blend_point_0/node = SubResource( 20 )
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource( 21 )
+blend_point_1/pos = 1.0
+blend_point_2/node = SubResource( 22 )
+blend_point_2/pos = -1.0
+
+[sub_resource type="AnimationNodeBlend3" id=19]
+
+[sub_resource type="AnimationNodeBlendTree" id=18]
+graph_offset = Vector2( -425.214, -164.174 )
+nodes/Animation/node = SubResource( 24 )
+nodes/Animation/position = Vector2( 100, 300 )
+"nodes/Animation 2/node" = SubResource( 23 )
+"nodes/Animation 2/position" = Vector2( 120, -20 )
+nodes/output/position = Vector2( 540, 140 )
+nodes/x_sign/node = SubResource( 17 )
+nodes/x_sign/position = Vector2( 20, 140 )
+nodes/y_sign/node = SubResource( 19 )
+nodes/y_sign/position = Vector2( 340, 120 )
+node_connections = [ "y_sign", 0, "Animation 2", "y_sign", 1, "x_sign", "y_sign", 2, "Animation", "output", 0, "y_sign" ]
+
+[node name="player" type="KinematicBody2D"]
+script = ExtResource( 2 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 9 )
+animation = "idle"
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 1 )
+shape = SubResource( 10 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/idle = SubResource( 11 )
+anims/jump = SubResource( 12 )
+anims/walk = SubResource( 13 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 18 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/x_sign/blend_position = 0.0
+parameters/y_sign/blend_amount = 0
+
+[node name="State Label" type="Label" parent="."]
+margin_left = -20.0
+margin_top = -33.0
+margin_right = 20.0
+margin_bottom = -19.0
+text = "none"
+align = 1
+script = ExtResource( 3 )
+
+[connection signal="changed_state" from="." to="State Label" method="_on_player_changed_state"]
